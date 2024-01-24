@@ -1,38 +1,30 @@
 const mongoose = require("mongoose");
+const userInfoSchema = require("../models/userInfoModel");
+const gameInfoSchema = require("../models/gameInfoModel");
 require("dotenv").config();
 
-const userInfoSchema = new mongoose.Schema({
-  _id: String,//userNum
-  gameList: [{
-    gameId: String, 
-    timestamp: Date 
-  }],
-});
-
-const gameInfoSchema = new mongoose.Schema({
-  _id: String,//gameNum
-  id: Number,
-});
 
 
-const UserInfo = mongoose.model('UserInfo', userInfoSchema, 'userInfo');
-const gameInfo = mongoose.model('gameInfo', gameInfoSchema, 'gameInfo');
-require("dotenv").config();
+// const UserInfo = mongoose.model('userInfo', userInfoSchema, 'userInfo');
+// const gameInfo = mongoose.model('gameInfo', gameInfoSchema, 'gameInfo');
 
 const dbConnect = async () => {
   try {
     await mongoose.connect(process.env.DB_CONNECT, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
     });
     console.log("DB connected");
 
-    const newUser = new UserInfo({_id:'123', id: 100 });
+    const gameInfo = mongoose.model('gameInfo', gameInfoSchema, 'gameInfo');
+
+    const UserInfo = mongoose.model('userInfo', userInfoSchema, 'userInfo');
+    const newUser = new gameInfo({ _id: 112300,id: 112300 });
     await newUser.save();
-    console.log('성공');
+
+ 
+    console.log('DB 연결 성공');
 
   } catch (err) {
-    console.error('실패:', err);
+    console.error('DB 연결 실패:', err);
   }
 };
 
