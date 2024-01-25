@@ -14,11 +14,11 @@ const dbConnect = async () => {
     });
     console.log("DB connected");
 
-    const gameInfo = mongoose.model('gameInfo', gameInfoSchema, 'gameInfo');
-
-    const UserInfo = mongoose.model('userInfo', userInfoSchema, 'userInfo');
-    const newUser = new gameInfo({ _id: 112300,id: 112300 });
-    await newUser.save();
+    // const gameInfo = mongoose.model('gameInfo', gameInfoSchema, 'gameInfo');
+    // const UserInfo = mongoose.model('userInfo', userInfoSchema, 'userInfo');
+    
+    // const newUser = new gameInfo({ _id: 112300,id: 112300 });
+    // await newUser.save();
 
  
     console.log('DB 연결 성공');
