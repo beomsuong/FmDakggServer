@@ -12,29 +12,32 @@ const app = express();
 app.set("view engine", "ejs");
 app.set("views", "./views");
 
-const port = 3000;
+
+
+let characterNumToName = new Map();
+
 
 dbConnect();
 
-app.use(express.json());
-
-///서버 시작 시 CharacterNum 읽어오기
-fs.readFile('l10n-English-20240124065616.txt', 'utf8', (err, data) => {
+///서버 시작 시 CharacterNum 읽어와 Map에 저장
+ fs.readFile('l10n-English-20240124065616.txt', 'utf8', (err, data) => {
   const lines = data.split('\n');
   const targetCharacterNumber = 3; 
-  for (const line of lines) {
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     const [number, characterName] = line.split('┃');
-    if (number.split('/')[0]!= `Character`) {
-      break; 
+  
+    if (number.split('/')[0] != `Character`) {
+      break;
     }
-    
-    console.log(number);
+    characterNumToName.set(i, characterName.slice(0, -2));
   }
+  console.log('characterNumToName 완료');
 });
 
-
-app.listen(port, () => {
-  console.log(`${port}번 포트에서 서버 실행 중`);
+app.use(express.json());
+app.listen(3000, () => {
+  console.log(`서버 시작`);
 });
 let userData = new Map();
 let gameData = new Map();
