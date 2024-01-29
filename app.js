@@ -60,12 +60,14 @@ app.get("/player/:nickname", async (req, res) => {
     return;
   }
   try {
-    await gameController.getUserGameList(nickname);
+    const gameIds = await gameController.getUserGameList(nickname);
+    console.log(gameIds);
+    for (const gameId of gameIds) {
+      await gameController.getGameData(gameId);
+    }
   } catch (error) {
-    console.error(error);
-    res.status(500).send("2 Internal Server Error");
+    res.status(500).send("너무 자주 시도하심");
     return;
   }
-  console.log(userData.get("aasam").dataList[0]);
-  res.send(await gameController.getGameData(userData.get("aasam").dataList[0]));
+  res.send("as");
 });

@@ -20,6 +20,7 @@ const UserGameSchema = new Schema({
 });
 
 const GameInfoSchema = new mongoose.Schema({
+  _id: Number,
   userGames: [UserGameSchema],
 });
 
