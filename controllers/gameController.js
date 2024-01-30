@@ -9,6 +9,13 @@ const userInfo = mongoose.model("userInfo", userInfoSchema);
 const gameInfo = mongoose.model("gameInfo", gameInfoSchema);
 /// 유저의 최근 게임 목록
 const getUserGameList = async (nickname) => {
+  // 시간 변수 추가해서 동일 전적은 자주 못보게 할 예정
+  const existingDocument = await userInfo.findOne({
+    _id: userData.get(nickname).userNum,
+  });
+  if (existingDocument) {
+    return existingDocument.gameList;
+  }
   return new Promise((resolve, reject) => {
     const options = {
       hostname: "open-api.bser.io",
@@ -30,27 +37,28 @@ const getUserGameList = async (nickname) => {
         try {
           const obj = JSON.parse(data);
           const gameIds = obj.userGames.map((game) => game.gameId);
+
           try {
             await userInfo.findOneAndUpdate(
               { _id: userData.get(nickname).userNum },
               { gameList: gameIds },
               { upsert: true }
             );
-            console.log(gameIds);
+            resolve(gameIds); // 결과 반환
           } catch (error) {
             console.error("Error inserting data:", error);
+            reject(error); // 에러 처리
           }
-          userData.get(nickname).dataList = gameIds; // 최근 10게임 추가
-          console.log("종료");
-          resolve(gameIds);
         } catch (error) {
-          resolve(error);
+          console.error(error);
+          reject(error); // JSON 파싱 에러 처리
         }
       });
     });
 
     apiReq.on("error", (e) => {
       console.error(e);
+      reject(e); // HTTP 요청 에러 처리
     });
 
     apiReq.end();
@@ -60,12 +68,10 @@ const getUserGameList = async (nickname) => {
 /// 게임정보
 const getGameData = async (gameId) => {
   // 먼저 문서가 존재하는지 확인
-  const existingDocument = await gameInfo.findOne({ _id: gameId });
-  if (existingDocument) {
-    console.log("이미 데이터 존재");
-    return true; // 문서가 이미 존재하면 true 반환
-  }
-
+  // const existingDocument = await gameInfo.findOne({ _id: gameId });
+  // if (existingDocument) {
+  //   return existingDocument; // 문서가 이미 존재하면 문서 반환
+  // }
   // API 요청 옵션
   const options = {
     hostname: "open-api.bser.io",
@@ -88,19 +94,18 @@ const getGameData = async (gameId) => {
       apiRes.on("end", async () => {
         try {
           const obj = JSON.parse(data);
-          await gameInfo.findOneAndUpdate(
+          const savedGameInfo = await gameInfo.findOneAndUpdate(
             { _id: gameId },
             { userGames: obj.userGames },
             { upsert: true }
           );
-          resolve(true);
+          resolve(savedGameInfo); // 저장한 데이터 반환
         } catch (error) {
           console.error(error);
           reject(error);
         }
       });
     });
-
     apiReq.on("error", (e) => {
       console.error(e);
       reject(e);

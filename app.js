@@ -59,15 +59,17 @@ app.get("/player/:nickname", async (req, res) => {
     res.status(404).send("User not found");
     return;
   }
+  const gamedata = [];
   try {
     const gameIds = await gameController.getUserGameList(nickname);
     console.log(gameIds);
     for (const gameId of gameIds) {
-      await gameController.getGameData(gameId);
+      gamedata.push(await gameController.getGameData(gameId));
     }
   } catch (error) {
+    console.log(error);
     res.status(500).send("너무 자주 시도하심");
     return;
   }
-  res.send("as");
+  res.send(gamedata);
 });
