@@ -1,8 +1,33 @@
+/// 유저 프로필 정보
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const userInfoSchema = new mongoose.Schema({
-  _id: String, //  userNum
-  gameList: [Number], // gameNum
+const userStateSchema = new Schema({
+  time: String,
+  mmr: Number,
+  nickName: String,
+  rank: Number,
+  rankSize: Number,
+  totalGames: Number,
+  totalWins: Number,
+  totalTeamKills: Number,
+  totalDeaths: Number,
+  escapeCount: Number,
+  rankPercent: Number,
+  averageRank: Number,
+  averageKills: Number,
+  averageAssistants: Number,
+  averageHunts: Number,
+  top1: Number,
+  top2: Number,
+  top3: Number,
+  top5: Number,
+  top7: Number,
 });
 
-module.exports = userInfoSchema;
+const UserInfoSchema = new mongoose.Schema({
+  _id: Number, //  userNum
+  userStats: [userStateSchema],
+});
+
+module.exports = UserInfoSchema;

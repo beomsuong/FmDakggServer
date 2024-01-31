@@ -1,16 +1,16 @@
 /* eslint-disable new-cap */
 const https = require("https");
 const { userData } = require("../global");
-const userInfoSchema = require("../models/userInfoModel");
+const userGameListSchema = require("../models/userGameListModel");
 const gameInfoSchema = require("../models/gameInfoModel");
 const mongoose = require("mongoose");
 
-const userInfo = mongoose.model("userInfo", userInfoSchema);
+const userGameList = mongoose.model("userGameList", userGameListSchema);
 const gameInfo = mongoose.model("gameInfo", gameInfoSchema);
 /// 유저의 최근 게임 목록
 const getUserGameList = async (nickname) => {
   // 시간 변수 추가해서 동일 전적은 자주 못보게 할 예정
-  const existingDocument = await userInfo.findOne({
+  const existingDocument = await userGameList.findOne({
     _id: userData.get(nickname).userNum,
   });
   if (existingDocument) {
@@ -27,7 +27,6 @@ const getUserGameList = async (nickname) => {
         "X-Api-Key": process.env.eternalreturnAPIKey,
       },
     };
-
     const apiReq = https.request(options, (apiRes) => {
       let data = "";
       apiRes.on("data", (chunk) => {
@@ -37,9 +36,8 @@ const getUserGameList = async (nickname) => {
         try {
           const obj = JSON.parse(data);
           const gameIds = obj.userGames.map((game) => game.gameId);
-
           try {
-            await userInfo.findOneAndUpdate(
+            await userGameList.findOneAndUpdate(
               { _id: userData.get(nickname).userNum },
               { gameList: gameIds },
               { upsert: true }

@@ -42,6 +42,21 @@ app.get("/getImage", async (req, res) => {
   res.sendFile(path.join(__dirname, "./123.jpg"));
 });
 
+/// 유저 정보 검색
+app.get("/v1/user/stats/:nickname", async (req, res) => {
+  const nickname = encodeURIComponent(req.params.nickname);
+  if (!userData.get(nickname)) {
+    // 사전에 조회하지 않은 유저일 때
+    try {
+      await userController.getUserNum(nickname);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  res.send(await userController.getUserStats(userData.get(nickname).userNum));
+});
+
+/// 유저 최근 10게임 조회
 app.get("/player/:nickname", async (req, res) => {
   const nickname = encodeURIComponent(req.params.nickname);
   if (!userData.get(nickname)) {
@@ -71,5 +86,5 @@ app.get("/player/:nickname", async (req, res) => {
     res.status(500).send("너무 자주 시도하심");
     return;
   }
-  res.send(gamedata);
+  res.send(gamedata); // 10게임 추가용
 });
