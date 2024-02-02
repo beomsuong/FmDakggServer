@@ -44,6 +44,7 @@ const getUserNum = async (nickname) => {
   });
 };
 
+/// 유저 프로필 조회
 const getUserStats = async (userNum) => {
   return new Promise((resolve, reject) => {
     const options = {
@@ -65,7 +66,10 @@ const getUserStats = async (userNum) => {
           const parsedData = JSON.parse(data).userStats;
           parsedData.time = new Date().toISOString();
           await userInfo.findOneAndUpdate(
-            { _id: userNum },
+            {
+              _id: userNum,
+              time: new Date().toISOString(),
+            },
             { userStats: parsedData },
             { upsert: true } // 없으면 새로 생성
           );

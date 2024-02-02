@@ -27,6 +27,7 @@ const userStateSchema = new Schema({
 
 const UserInfoSchema = new mongoose.Schema({
   _id: Number, //  userNum
+  time: String,
   userStats: [userStateSchema],
 });
 

@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 
 const userGameList = mongoose.model("userGameList", userGameListSchema);
 const gameInfo = mongoose.model("gameInfo", gameInfoSchema);
+
 /// 유저의 최근 게임 목록
 const getUserGameList = async (nickname) => {
   // 시간 변수 추가해서 동일 전적은 자주 못보게 할 예정
@@ -82,7 +83,6 @@ const getGameData = async (gameId) => {
     },
   };
 
-  // API 요청 및 처리
   return new Promise((resolve, reject) => {
     const apiReq = https.request(options, (apiRes) => {
       let data = "";
