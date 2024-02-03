@@ -27,7 +27,7 @@ const userStateSchema = new Schema({
 
 const UserInfoSchema = new mongoose.Schema({
   _id: Number, //  userNum
-  time: String,
+  time: { type: Date }, // 데이터 조회 시간 저장 (잦은 갱신 방지)
   userStats: [userStateSchema],
 });
 

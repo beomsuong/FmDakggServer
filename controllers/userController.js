@@ -29,6 +29,7 @@ const getUserNum = async (nickname) => {
           userData.set(parsedData.user.nickname, {
             userNum: parsedData.user.userNum,
           });
+          console.log("번호 조회 완료");
           resolve(parsedData);
         } catch (error) {
           reject(error);
@@ -68,23 +69,24 @@ const getUserStats = async (userNum) => {
           await userInfo.findOneAndUpdate(
             {
               _id: userNum,
-              time: new Date().toISOString(),
             },
-            { userStats: parsedData },
+            {
+              $set: {
+                time: new Date(),
+                userStats: parsedData,
+              },
+            },
             { upsert: true } // 없으면 새로 생성
           );
-          console.log(parsedData);
           resolve(parsedData);
         } catch (error) {
           reject(error);
         }
       });
     });
-
     apiReq.on("error", (e) => {
       reject(e);
     });
-
     apiReq.end();
   });
 };

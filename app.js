@@ -63,9 +63,8 @@ app.get("/player/:nickname", async (req, res) => {
     // 사전에 조회하지 않은 유저일 때
     try {
       await userController.getUserNum(nickname);
-      return;
     } catch (error) {
-      console.error(error);
+      res.status(404).send("userNum 조회 실패");
       return;
     }
   }
@@ -74,17 +73,17 @@ app.get("/player/:nickname", async (req, res) => {
     res.status(404).send("User not found");
     return;
   }
-  const gamedata = [];
+  const gameData = []; // 게임 데이터 반환용
   try {
     const gameIds = await gameController.getUserGameList(nickname);
     console.log(gameIds);
     for (const gameId of gameIds) {
-      gamedata.push(await gameController.getGameData(gameId));
+      gameData.push(await gameController.getGameData(gameId));
     }
   } catch (error) {
     console.log(error);
     res.status(500).send("너무 자주 시도하심");
     return;
   }
-  res.send(gamedata); // 10게임 추가용
+  res.send(gameData); // 10게임 추가용
 });
