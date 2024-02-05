@@ -7,14 +7,10 @@ const gameController = require("./controllers/gameController");
 // const https = require('https');
 const path = require("path");
 const { userData } = require("./global");
+const { characterNumToName } = require("./global");
 require("dotenv").config();
 
 const app = express();
-
-app.set("view engine", "ejs");
-app.set("views", "./views");
-
-const characterNumToName = new Map();
 
 dbConnect();
 

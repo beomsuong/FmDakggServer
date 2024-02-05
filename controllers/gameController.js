@@ -3,13 +3,14 @@ const https = require("https");
 const { userData } = require("../global");
 const userGameListSchema = require("../models/userGameListModel");
 const gameInfoSchema = require("../models/gameInfoModel");
+const statController = require("./statController");
 const mongoose = require("mongoose");
 
 const userGameList = mongoose.model("userGameList", userGameListSchema);
 const gameInfo = mongoose.model("gameInfo", gameInfoSchema);
 
 /// 유저의 최근 게임 목록
-const getUserGameList = async (nickname, next = null) => {
+const getUserGameList = async (nickname) => {
   // 시간 변수 추가해서 동일 전적은 자주 못보게 할 예정
   const existingDocument = await userGameList.findOne({
     _id: userData.get(nickname).userNum,
@@ -21,10 +22,7 @@ const getUserGameList = async (nickname, next = null) => {
     const options = {
       hostname: "open-api.bser.io",
       port: 443,
-      path:
-        "/v1/user/games/" + userData.get(nickname).userNum + next
-          ? `?next=${next}` // 다음 전적을 보기 위한 next
-          : "",
+      path: "/v1/user/games/" + userData.get(nickname).userNum, // 다음 전적을 보기 위한 next
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -103,7 +101,12 @@ const getGameData = async (gameId) => {
             { userGames: obj.userGames },
             { upsert: true }
           );
-          console.log("게임 반환");
+          console.log("게임 반환 ");
+          console.log(gameId);
+
+          // statController.updateCharactersStats(obj.userGames);
+
+          statController.updateCharactersStats(obj.userGames);
           resolve(savedGameInfo); // 저장한 데이터 반환
         } catch (error) {
           console.error(error);
