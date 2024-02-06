@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 //  코발트용
 const UserGameSchema = new Schema({
+  gameRank: Number, // 게임 승패 1,2
   userNum: Number, // 유저 번호
   playTime: Number, // 게임 시간
   characterNum: Number, // 캐릭터 번호
