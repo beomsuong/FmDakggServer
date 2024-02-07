@@ -13,12 +13,13 @@ const characterRumiaStat = mongoose.model(
   characterRumiaStatSchema
 );
 
-/// 코발트만 할까요?
 const updateCharacterStats = async (GameInfo) => {
   console.log(GameInfo.length);
   if (GameInfo.length === 8) {
+    /// 플레이어가 8명이면 코발트
     updateCharacterCobaltStats(GameInfo);
   } else {
+    /// 루미아섬 통계
     updateCharacterCobaltStats(GameInfo);
   }
 };
@@ -30,6 +31,21 @@ const updateCharacterCobaltStats = async (GameInfo) => {
   });
   if (existingDocument) {
     return existingDocument.gameList;
+  } else {
+    // 첫 전적 시
+    await characterCobaltStat.findOneAndUpdate(
+      {
+        _id: characterNumToName.get(GameInfo).userNum,
+        numberOfGames: 1,
+      },
+      {
+        $set: {
+          time: new Date(),
+          userStats: GameInfo,
+        },
+      },
+      { upsert: true } // 없으면 새로 생성
+    );
   }
 };
 /// 루미아섬 통계용
@@ -39,6 +55,21 @@ const updateCharacterRumiaStats = async (GameInfo) => {
   });
   if (existingDocument) {
     return existingDocument.gameList;
+  } else {
+    // 첫 전적 시
+    await characterRumiaStat.findOneAndUpdate(
+      {
+        _id: characterNumToName.get(GameInfo).userNum,
+        numberOfGames: 1,
+      },
+      {
+        $set: {
+          time: new Date(),
+          userStats: GameInfo,
+        },
+      },
+      { upsert: true } // 없으면 새로 생성
+    );
   }
 };
 module.exports = {
