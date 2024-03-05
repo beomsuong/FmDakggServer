@@ -1,4 +1,3 @@
-/* eslint-disable new-cap */
 const https = require("https");
 const { userData } = require("../global");
 const userGameListSchema = require("../models/userGameListModel");
