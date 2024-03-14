@@ -2,7 +2,7 @@ const https = require("https");
 const { userData } = require("../global");
 const userGameListSchema = require("../models/userGameListModel");
 const gameInfoSchema = require("../models/gameInfoModel");
-const statController = require("./statController");
+// const statController = require("./statController");
 const mongoose = require("mongoose");
 
 const userGameList = mongoose.model("userGameList", userGameListSchema);
@@ -105,7 +105,7 @@ const getGameData = async (gameId) => {
 
           // statController.updateCharactersStats(obj.userGames);
 
-          statController.updateCharactersStats(obj.userGames);
+          // statController.updateCharactersStats(obj.userGames);
           resolve(savedGameInfo); // 저장한 데이터 반환
         } catch (error) {
           console.error(error);

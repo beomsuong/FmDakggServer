@@ -9,10 +9,11 @@ const UserGameSchema = new Schema({
   characterNum: Number, // 캐릭터 번호
   characterLevel: Number, //  레벨
   teamKill: Number, //  팀 총 킬 수
-  playKill: Number, //  데스
-  playAssistant: Number, //  어시
+  playerKill: Number, //  개인킬
+  playerAssistant: Number, //  어시
   damageToPlayer: Number, //  딜량
   finalInfusion: Array, //  인퓨전
+  escapeState: Number, // 탈출
   equipment: {
     // 착용 장비
     type: Map,
