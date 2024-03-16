@@ -2,7 +2,13 @@
 const userData = new Map();
 const gameData = new Map();
 const characterNumToName = new Map();
+// eslint-disable-next-line space-before-function-paren
+function delay(ms = 1000) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 module.exports = {
+  delay,
   userData,
   gameData,
   characterNumToName,

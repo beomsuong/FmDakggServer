@@ -13,6 +13,7 @@ require("dotenv").config();
 const app = express();
 
 dbConnect();
+// eslint-disable-next-line space-before-function-paren
 
 /// 서버 시작 시 CharacterNum 읽어와 Map에 저장
 fs.readFile("l10n-English-20240124065616.txt", "utf8", (_err, data) => {
@@ -34,14 +35,28 @@ app.listen(3000, () => {
   console.log("서버 시작");
 });
 
-app.get("/getImage", async (req, res) => {
-  res.sendFile(path.join(__dirname, "./123.jpg"));
+app.get("/charactersImage", async (req, res) => {
+  res.sendFile(path.join(__dirname, "/assets/MainCharacter/0.png"));
 });
 
 app.get("/test", async (req, res) => {
   console.log("요청");
   res.send("123");
 });
+
+/// 유저 Num조회
+app.get("/v1/user/num/:nickname", async (req, res) => {
+  const nickname = encodeURIComponent(req.params.nickname);
+  if (!userData.get(nickname)) {
+    // 사전에 조회하지 않은 유저일 때
+    try {
+      res.send(await userController.getUserNum(nickname));
+    } catch (error) {
+      console.error(error);
+    }
+  }
+});
+
 /// 유저 정보 검색
 app.get("/v1/user/stats/:nickname", async (req, res) => {
   const nickname = encodeURIComponent(req.params.nickname);

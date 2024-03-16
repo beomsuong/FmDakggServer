@@ -1,5 +1,6 @@
 const https = require("https");
 const { userData } = require("../global");
+const { delay } = require("../global");
 const userGameListSchema = require("../models/userGameListModel");
 const gameInfoSchema = require("../models/gameInfoModel");
 // const statController = require("./statController");
@@ -70,11 +71,12 @@ const getUserGameList = async (nickname) => {
 /// 게임정보
 const getGameData = async (gameId) => {
   // 먼저 문서가 존재하는지 확인
-  // const existingDocument = await gameInfo.findOne({ _id: gameId });
-  // if (existingDocument) {
-  //   return existingDocument; // 문서가 이미 존재하면 문서 반환
-  // }
+  const existingDocument = await gameInfo.findOne({ _id: gameId });
+  if (existingDocument) {
+    return existingDocument; // 문서가 이미 존재하면 문서 반환
+  }
   // API 요청 옵션
+  await delay(500);
   const options = {
     hostname: "open-api.bser.io",
     port: 443,

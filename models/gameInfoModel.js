@@ -6,6 +6,7 @@ const UserGameSchema = new Schema({
   gameRank: Number, // 게임 승패 1,2
   userNum: Number, // 유저 번호
   playTime: Number, // 게임 시간
+  startDtm: Date, // 게임 종료 시간
   characterNum: Number, // 캐릭터 번호
   characterLevel: Number, //  레벨
   teamKill: Number, //  팀 총 킬 수
@@ -14,6 +15,7 @@ const UserGameSchema = new Schema({
   damageToPlayer: Number, //  딜량
   finalInfusion: Array, //  인퓨전
   escapeState: Number, // 탈출
+  routeIdOfStart: Number, // 루트 번호
   equipment: {
     // 착용 장비
     type: Map,
