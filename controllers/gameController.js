@@ -18,6 +18,8 @@ const getUserGameList = async (nickname) => {
   if (existingDocument) {
     return existingDocument.gameList;
   }
+  await delay(500);
+
   return new Promise((resolve, reject) => {
     const options = {
       hostname: "open-api.bser.io",
@@ -29,6 +31,7 @@ const getUserGameList = async (nickname) => {
         "X-Api-Key": process.env.eternalreturnAPIKey,
       },
     };
+
     const apiReq = https.request(options, (apiRes) => {
       let data = "";
       apiRes.on("data", (chunk) => {
@@ -104,10 +107,6 @@ const getGameData = async (gameId) => {
           );
           console.log("게임 반환 ");
           console.log(gameId);
-
-          // statController.updateCharactersStats(obj.userGames);
-
-          // statController.updateCharactersStats(obj.userGames);
           resolve(savedGameInfo); // 저장한 데이터 반환
         } catch (error) {
           console.error(error);

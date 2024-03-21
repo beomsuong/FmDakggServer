@@ -39,13 +39,9 @@ app.get("/charactersImage", async (req, res) => {
   res.sendFile(path.join(__dirname, "/assets/MainCharacter/0.png"));
 });
 
-app.get("/test", async (req, res) => {
-  console.log("요청");
-  res.send("123");
-});
-
 /// 유저 Num조회
 app.get("/v1/user/num/:nickname", async (req, res) => {
+  console.log("닉네임 요청");
   const nickname = encodeURIComponent(req.params.nickname);
   if (!userData.get(nickname)) {
     // 사전에 조회하지 않은 유저일 때
@@ -54,12 +50,14 @@ app.get("/v1/user/num/:nickname", async (req, res) => {
     } catch (error) {
       console.error(error);
     }
+  } else {
+    res.send(userData.get(nickname));
   }
 });
 
 /// 유저 정보 검색
 app.get("/v1/user/stats/:nickname", async (req, res) => {
-  const nickname = encodeURIComponent(req.params.nickname);
+  const nickname = req.params.nickname;
   if (!userData.get(nickname)) {
     // 사전에 조회하지 않은 유저일 때
     try {
@@ -73,7 +71,7 @@ app.get("/v1/user/stats/:nickname", async (req, res) => {
 
 /// 유저 최근 10게임 조회
 app.get("/player/:nickname", async (req, res) => {
-  const nickname = encodeURIComponent(req.params.nickname);
+  const nickname = req.params.nickname;
 
   if (!userData.get(nickname)) {
     // 사전에 조회하지 않은 유저일 때
@@ -102,5 +100,8 @@ app.get("/player/:nickname", async (req, res) => {
     return;
   }
   console.log("끝");
-  res.send(gameData); // 10게임 추가용
+  res.json({
+    gameData,
+    userNum: userData.get(nickname).userNum, // 예시에서는 이 부분을 수정했습니다.
+  });
 });
