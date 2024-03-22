@@ -27,7 +27,7 @@ fs.readFile("l10n-English-20240124065616.txt", "utf8", (_err, data) => {
     }
     characterNumToName.set(i, characterName.slice(0, -1));
   }
-  console.log("characterNumToName 완료");
+  console.log(characterNumToName.get(2));
 });
 
 app.use(express.json());
@@ -35,14 +35,21 @@ app.listen(3000, () => {
   console.log("서버 시작");
 });
 
-app.get("/charactersImage", async (req, res) => {
-  res.sendFile(path.join(__dirname, "/assets/MainCharacter/0.png"));
+app.get("/charactersImage/:characterNum", async (req, res) => {
+  const characterNum = req.params.characterNum;
+  const filePath = path.join(
+    __dirname,
+    "assets",
+    "MainCharacter",
+    `${characterNumToName.get(parseInt(characterNum))}.png`
+  );
+  res.sendFile(filePath);
 });
 
 /// 유저 Num조회
 app.get("/v1/user/num/:nickname", async (req, res) => {
   console.log("닉네임 요청");
-  const nickname = encodeURIComponent(req.params.nickname);
+  const nickname = req.params.nickname;
   if (!userData.get(nickname)) {
     // 사전에 조회하지 않은 유저일 때
     try {
