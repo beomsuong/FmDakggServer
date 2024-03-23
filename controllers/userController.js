@@ -7,10 +7,12 @@ const userInfo = mongoose.model("userInfo", userInfoSchema);
 /// 유저 Num조회
 const getUserNum = async (nickname) => {
   return new Promise((resolve, reject) => {
+    const encodedNickname = encodeURIComponent(nickname); // 이 부분을 추가
+
     const options = {
       hostname: "open-api.bser.io",
       port: 443,
-      path: "/v1/user/nickname?query=" + nickname,
+      path: "/v1/user/nickname?query=" + encodedNickname,
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -20,9 +22,11 @@ const getUserNum = async (nickname) => {
 
     const apiReq = https.request(options, (apiRes) => {
       let data = "";
+
       apiRes.on("data", (chunk) => {
         data += chunk;
       });
+      console.log("반환 데이터 " + data);
       apiRes.on("end", () => {
         try {
           const parsedData = JSON.parse(data);
@@ -32,6 +36,7 @@ const getUserNum = async (nickname) => {
           console.log("번호 조회 완료");
           resolve(parsedData);
         } catch (error) {
+          console.log("조회 실패 " + error);
           reject(error);
         }
       });

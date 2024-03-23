@@ -72,14 +72,12 @@ const getUserGameList = async (nickname) => {
 };
 
 /// 게임정보
-const getGameData = async (gameId) => {
-  // 먼저 문서가 존재하는지 확인
+const getGameData = async (gameId, attempt = 0) => {
   const existingDocument = await gameInfo.findOne({ _id: gameId });
   if (existingDocument) {
-    return existingDocument; // 문서가 이미 존재하면 문서 반환
+    return existingDocument;
   }
-  // API 요청 옵션
-  await delay(500);
+
   const options = {
     hostname: "open-api.bser.io",
     port: 443,
@@ -100,22 +98,35 @@ const getGameData = async (gameId) => {
       apiRes.on("end", async () => {
         try {
           const obj = JSON.parse(data);
+          if (!obj.userGames) {
+            console.log("조회 실패 또는 userGames가 없음 " + gameId);
+            // 최대 재시도 횟수 설정
+            if (attempt < 3) {
+              console.log(`재시도 중... (${attempt + 1})`);
+              setTimeout(() => getGameData(gameId, attempt + 1), 2000);
+            } else {
+              console.log("최대 재시도 횟수 초과");
+            }
+            reject(new Error("userGames is null or not found"));
+            return;
+          }
+
           const savedGameInfo = await gameInfo.findOneAndUpdate(
             { _id: gameId },
             { userGames: obj.userGames },
             { upsert: true }
           );
-          console.log("게임 반환 ");
-          console.log(gameId);
-          resolve(savedGameInfo); // 저장한 데이터 반환
+          console.log("게임 정보 저장 및 반환 ", obj.userGames);
+          resolve(savedGameInfo);
         } catch (error) {
-          console.error(error);
+          console.error("데이터 처리 중 오류 발생: ", error);
           reject(error);
         }
       });
     });
+
     apiReq.on("error", (e) => {
-      console.error(e);
+      console.error("API 요청 중 오류 발생: ", e);
       reject(e);
     });
 

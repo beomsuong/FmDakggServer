@@ -43,6 +43,49 @@ app.get("/charactersImage/:characterNum", async (req, res) => {
     "MainCharacter",
     `${characterNumToName.get(parseInt(characterNum))}.png`
   );
+
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      /// 이미지 파일 없는 경우
+      res.sendFile(path.join(__dirname, "/assets/MainCharacter/0.png"));
+    } else {
+      res.sendFile(filePath);
+    }
+  });
+});
+
+app.get("/weaponsImage/:weaponsNum", async (req, res) => {
+  const weaponsNum = req.params.weaponsNum;
+  const filePath = path.join(
+    __dirname,
+    "assets",
+    "weapons",
+    `${weaponsNum}.png`
+  );
+  res.sendFile(filePath);
+});
+
+app.get("/chestImage/:chestNum", async (req, res) => {
+  const chestNum = req.params.chestNum;
+  const filePath = path.join(__dirname, "assets", "Chest", `${chestNum}.png`);
+  res.sendFile(filePath);
+});
+
+app.get("/headImage/:headNum", async (req, res) => {
+  const headNum = req.params.headNum;
+  const filePath = path.join(__dirname, "assets", "head", `${headNum}.png`);
+  res.sendFile(filePath);
+});
+
+app.get("/LegImage/:legNum", async (req, res) => {
+  const legNum = req.params.legNum;
+  const filePath = path.join(__dirname, "assets", "Leg", `${legNum}.png`);
+  res.sendFile(filePath);
+});
+
+app.get("/armImage/:armNum", async (req, res) => {
+  const armNum = req.params.armNum;
+  const filePath = path.join(__dirname, "assets", "Arm", `${armNum}.png`);
   res.sendFile(filePath);
 });
 
@@ -79,10 +122,11 @@ app.get("/v1/user/stats/:nickname", async (req, res) => {
 /// 유저 최근 10게임 조회
 app.get("/player/:nickname", async (req, res) => {
   const nickname = req.params.nickname;
-
+  console.log("전적 조회 요청" + nickname);
   if (!userData.get(nickname)) {
     // 사전에 조회하지 않은 유저일 때
     try {
+      console.log("검색요청");
       await userController.getUserNum(nickname);
     } catch (error) {
       res.status(404).send("userNum 조회 실패");
@@ -91,9 +135,11 @@ app.get("/player/:nickname", async (req, res) => {
   }
   const userNum = userData.get(nickname)?.userNum;
   if (!userNum) {
+    console.log("저장된 회원 정보 없음");
     res.status(404).send("User not found");
     return;
   }
+  console.log("회원 번호 " + userNum);
   const gameData = []; // 게임 데이터 반환용
   try {
     const gameIds = await gameController.getUserGameList(nickname);
