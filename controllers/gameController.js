@@ -116,7 +116,7 @@ const getGameData = async (gameId, attempt = 0) => {
             { userGames: obj.userGames },
             { upsert: true }
           );
-          console.log("게임 정보 저장 및 반환 ", obj.userGames);
+          console.log("게임 정보 저장 및 반환 ", gameId);
           resolve(savedGameInfo);
         } catch (error) {
           console.error("데이터 처리 중 오류 발생: ", error);
