@@ -35,6 +35,11 @@ app.listen(3000, () => {
   console.log("서버 시작");
 });
 
+app.get("/rankTierIMGImage/", async (req, res) => {
+  const filePath = path.join(__dirname, "assets", "RankTierIMG", "Titan.png");
+  res.sendFile(filePath);
+});
+
 app.get("/charactersImage/:characterNum", async (req, res) => {
   const characterNum = req.params.characterNum;
   const filePath = path.join(
@@ -107,7 +112,8 @@ app.get("/v1/user/num/:nickname", async (req, res) => {
 
 /// 유저 정보 검색
 app.get("/v1/user/stats/:nickname", async (req, res) => {
-  const nickname = req.params.nickname;
+  const nickname = encodeURIComponent(req.params.nickname); // 이 부분을 추가
+
   if (!userData.get(nickname)) {
     // 사전에 조회하지 않은 유저일 때
     try {
@@ -116,7 +122,11 @@ app.get("/v1/user/stats/:nickname", async (req, res) => {
       console.error(error);
     }
   }
-  res.send(await userController.getUserStats(userData.get(nickname).userNum));
+  const UserStat = await userController.getUserStats(
+    userData.get(nickname).userNum
+  );
+  console.log("유저 정보 " + UserStat.UserStat);
+  res.send(UserStat);
 });
 
 /// 유저 최근 10게임 조회

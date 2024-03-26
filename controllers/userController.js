@@ -7,12 +7,10 @@ const userInfo = mongoose.model("userInfo", userInfoSchema);
 /// 유저 Num조회
 const getUserNum = async (nickname) => {
   return new Promise((resolve, reject) => {
-    const encodedNickname = encodeURIComponent(nickname); // 이 부분을 추가
-
     const options = {
       hostname: "open-api.bser.io",
       port: 443,
-      path: "/v1/user/nickname?query=" + encodedNickname,
+      path: "/v1/user/nickname?query=" + nickname,
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -55,7 +53,7 @@ const getUserStats = async (userNum) => {
   return new Promise((resolve, reject) => {
     const options = {
       hostname: "open-api.bser.io",
-      path: `/v1/user/stats/${userNum}/21`,
+      path: `/v1/user/stats/${userNum}/23`,
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -71,7 +69,7 @@ const getUserStats = async (userNum) => {
         try {
           const parsedData = JSON.parse(data).userStats;
           parsedData.time = new Date().toISOString();
-          await userInfo.findOneAndUpdate(
+          const savedUserInfo = await userInfo.findOneAndUpdate(
             {
               _id: userNum,
             },
@@ -83,7 +81,8 @@ const getUserStats = async (userNum) => {
             },
             { upsert: true } // 없으면 새로 생성
           );
-          resolve(parsedData);
+          console.log("유저 데이터 " + savedUserInfo);
+          resolve(savedUserInfo);
         } catch (error) {
           reject(error);
         }
