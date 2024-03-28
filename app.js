@@ -13,7 +13,6 @@ require("dotenv").config();
 const app = express();
 
 dbConnect();
-// eslint-disable-next-line space-before-function-paren
 
 /// 서버 시작 시 CharacterNum 읽어와 Map에 저장
 fs.readFile("l10n-English-20240124065616.txt", "utf8", (_err, data) => {
@@ -27,7 +26,7 @@ fs.readFile("l10n-English-20240124065616.txt", "utf8", (_err, data) => {
     }
     characterNumToName.set(i, characterName.slice(0, -1));
   }
-  console.log(characterNumToName.get(2));
+  console.log(userData.get("nickname")?.userNum == null);
 });
 
 app.use(express.json());
@@ -112,9 +111,9 @@ app.get("/v1/user/num/:nickname", async (req, res) => {
 
 /// 유저 정보 검색
 app.get("/v1/user/stats/:nickname", async (req, res) => {
-  const nickname = encodeURIComponent(req.params.nickname); // 이 부분을 추가
-
-  if (!userData.get(nickname)) {
+  const nickname = encodeURIComponent(req.params.nickname);
+  console.log("유저 정보 검색 요청");
+  if (userData.get(nickname)?.userNum == null) {
     // 사전에 조회하지 않은 유저일 때
     try {
       await userController.getUserNum(nickname);
@@ -125,7 +124,7 @@ app.get("/v1/user/stats/:nickname", async (req, res) => {
   const UserStat = await userController.getUserStats(
     userData.get(nickname).userNum
   );
-  console.log("유저 정보 " + UserStat.UserStat);
+  console.log("유저 정보 " + UserStat.userStats);
   res.send(UserStat);
 });
 
@@ -133,10 +132,9 @@ app.get("/v1/user/stats/:nickname", async (req, res) => {
 app.get("/player/:nickname", async (req, res) => {
   const nickname = req.params.nickname;
   console.log("전적 조회 요청" + nickname);
-  if (!userData.get(nickname)) {
+  if (!userData.get(nickname)?.userNum) {
     // 사전에 조회하지 않은 유저일 때
     try {
-      console.log("검색요청");
       await userController.getUserNum(nickname);
     } catch (error) {
       res.status(404).send("userNum 조회 실패");

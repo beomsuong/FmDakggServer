@@ -1,6 +1,8 @@
 # fmdakggServer
 
 fmdakgg 프로젝트의 백엔드
+
+프론트(Flutter)
 https://github.com/beomsuong/FmDakgg
 
 블로그 포스팅

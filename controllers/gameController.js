@@ -1,6 +1,5 @@
 const https = require("https");
 const { userData } = require("../global");
-const { delay } = require("../global");
 const userGameListSchema = require("../models/userGameListModel");
 const gameInfoSchema = require("../models/gameInfoModel");
 // const statController = require("./statController");
@@ -18,7 +17,6 @@ const getUserGameList = async (nickname) => {
   if (existingDocument) {
     return existingDocument.gameList;
   }
-  await delay(500);
 
   return new Promise((resolve, reject) => {
     const options = {
@@ -31,7 +29,6 @@ const getUserGameList = async (nickname) => {
         "X-Api-Key": process.env.eternalreturnAPIKey,
       },
     };
-
     const apiReq = https.request(options, (apiRes) => {
       let data = "";
       apiRes.on("data", (chunk) => {
@@ -39,29 +36,11 @@ const getUserGameList = async (nickname) => {
       });
       apiRes.on("end", async () => {
         const obj = JSON.parse(data);
+        console.log("게임 데이터 결과 ", data);
         const gameIds = obj.userGames.map((game) => game.gameId);
-        resolve(gameIds); // 결과 반환
-        // try {
-        //   const obj = JSON.parse(data);
-        //   const gameIds = obj.userGames.map((game) => game.gameId);
-        //   try {
-        //     await userGameList.findOneAndUpdate(
-        //       { _id: userData.get(nickname).userNum },
-        //       { gameList: gameIds },
-        //       { upsert: true }
-        //     );
-        //     resolve(gameIds); // 결과 반환
-        //   } catch (error) {
-        //     console.error("Error inserting data:", error);
-        //     reject(error); // 에러 처리
-        //   }
-        // } catch (error) {
-        //   console.error(error);
-        //   reject(error); // JSON 파싱 에러 처리
-        // }
+        resolve(gameIds);
       });
     });
-
     apiReq.on("error", (e) => {
       console.error(e);
       reject(e); // HTTP 요청 에러 처리
@@ -116,7 +95,7 @@ const getGameData = async (gameId, attempt = 0) => {
             { userGames: obj.userGames },
             { upsert: true }
           );
-          console.log("게임 정보 저장 및 반환 ", gameId);
+          console.log("게임 정보 저장 및 반환 ", gameId + obj.userGames);
           resolve(savedGameInfo);
         } catch (error) {
           console.error("데이터 처리 중 오류 발생: ", error);

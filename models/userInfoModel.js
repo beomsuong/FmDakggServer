@@ -2,10 +2,20 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+const characterStatsSchema = new Schema({
+  characterCode: Number,
+  totalGames: Number,
+  usages: Number,
+  maxKillings: Number,
+  top3: Number,
+  wins: Number,
+  top3Rate: Number,
+  averageRank: Number,
+});
+
 const userStateSchema = new Schema({
-  time: String,
   mmr: Number,
-  nickName: String,
+  nickname: String,
   rank: Number,
   rankSize: Number,
   totalGames: Number,
@@ -23,6 +33,7 @@ const userStateSchema = new Schema({
   top3: Number,
   top5: Number,
   top7: Number,
+  characterStats: [characterStatsSchema],
 });
 
 const UserInfoSchema = new mongoose.Schema({

@@ -6,6 +6,10 @@ const userInfoSchema = require("../models/userInfoModel");
 const userInfo = mongoose.model("userInfo", userInfoSchema);
 /// 유저 Num조회
 const getUserNum = async (nickname) => {
+  console.log("유저 num 조회 저장 여부 " + userData.get(nickname)?.userNum);
+  if (userData.get(nickname)?.userNum != null) {
+    return userData.get(nickname)?.userNum;
+  }
   return new Promise((resolve, reject) => {
     const options = {
       hostname: "open-api.bser.io",
@@ -24,7 +28,7 @@ const getUserNum = async (nickname) => {
       apiRes.on("data", (chunk) => {
         data += chunk;
       });
-      console.log("반환 데이터 " + data);
+      console.log("반환 데이터 " + apiRes);
       apiRes.on("end", () => {
         try {
           const parsedData = JSON.parse(data);
